@@ -9,7 +9,6 @@ class DeleteDialog extends StatefulWidget {
 }
 
 class _DeleteDialogState extends State<DeleteDialog>{
-  @override
 
   Widget _centerWidget() {
     return Container(

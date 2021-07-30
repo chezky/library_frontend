@@ -82,7 +82,6 @@ class _CustomerDialogState extends State<CustomerDialog> with SingleTickerProvid
         ],
       ),
       actions: <Widget>[
-        _submitButton(),
         TextButton(
           onPressed: () => Navigator.pop(context, 'cancel'),
           child: const Text(
@@ -92,6 +91,7 @@ class _CustomerDialogState extends State<CustomerDialog> with SingleTickerProvid
             ),
           ),
         ),
+        _submitButton(),
       ],
     );
   }

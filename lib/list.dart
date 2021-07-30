@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:library_frontend/dialogs/delete.dart';
 import 'dialogs/add_scan.dart';
 import 'models/book_list.dart';
 import 'package:library_frontend/models/books_scanned.dart';
