@@ -103,7 +103,6 @@ class _AddScanDialogState extends State<AddScanDialog> with TickerProviderStateM
         var ndef = Ndef.from(tag);
 
         NdefMessage message = NdefMessage([
-          //TODO: change this to be dynamic
           NdefRecord.createText(widget.id.toString()),
         ]);
 
@@ -118,8 +117,10 @@ class _AddScanDialogState extends State<AddScanDialog> with TickerProviderStateM
             Navigator.pop(context, 'success');
           });
         } catch (e) {
-          NfcManager.instance.stopSession(errorMessage: e.toString());
-          return;
+          setState(() {
+            bodyText = "Error scanning book, please try again.";
+          });
+          // NfcManager.instance.stopSession(errorMessage: e.toString());
         }
       }
     );

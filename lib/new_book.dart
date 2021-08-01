@@ -17,13 +17,14 @@ class _AddBookPageState extends State<AddBookPage> {
 
   Widget _topIcon() {
     return Container(
-      padding: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.only(top: 20, left: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
             icon: const Icon(
               Icons.arrow_back_rounded,
+              color: Colors.grey,
             ),
             onPressed: () => Navigator.pop(context),
           ),
