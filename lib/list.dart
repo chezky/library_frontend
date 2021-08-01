@@ -76,7 +76,7 @@ class _ListPageState extends State<ListPage> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text("Confirm"),
-              content: Text('Are you sure you wish to delete ${bl["title"]} ?'),
+              content: Text('Are you sure you wish to permanently delete ${bl["title"]} ?'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(true),
@@ -176,7 +176,7 @@ class _ListPageState extends State<ListPage> {
                     child: TextField(
                       onChanged: (s) => API(context).getByTitle(s),
                       decoration: const InputDecoration(
-                          hintText: "Search for a title",
+                          hintText: "Search by title, author, or customer",
                           floatingLabelBehavior: FloatingLabelBehavior.never,
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
