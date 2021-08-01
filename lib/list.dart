@@ -166,6 +166,9 @@ class _ListPageState extends State<ListPage> {
                 // Allows the user to reveal the app bar if they begin scrolling
                 // back up the list of items.
                 floating: true,
+                iconTheme: IconThemeData(
+                  color: Colors.grey[600],
+                ),
                 // Display a placeholder widget to visualize the shrinking size.
                 flexibleSpace: Padding(
                   padding: EdgeInsets.fromLTRB(15,20,15,0),
