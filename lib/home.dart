@@ -105,8 +105,9 @@ class _HomePageState extends State<HomePage> {
             height: 100,
             minWidth: 150,
             color: color,
-            onPressed: () => {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ListPage(use: use,)))
+            onPressed: () async => {
+              await Navigator.push(context, MaterialPageRoute(builder: (context) => ListPage(use: use,))),
+              API(context).getAllBooks(),
             },
             child: Text(
               body,
