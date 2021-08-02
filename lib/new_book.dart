@@ -36,12 +36,12 @@ class _AddBookPageState extends State<AddBookPage> {
   Widget _title() {
     return Container(
       padding: const EdgeInsets.fromLTRB(0,40,0,0),
-      child: const Text(
+      child: Text(
         'Add a Book',
         style: TextStyle(
           fontSize: 40,
           fontWeight: FontWeight.w200,
-          color: Colors.grey,
+          color: Colors.grey[600],
         ),
       ),
     );
@@ -68,9 +68,6 @@ class _AddBookPageState extends State<AddBookPage> {
         textInputAction: id == 0 ? TextInputAction.next : TextInputAction.done,
         decoration: InputDecoration(
           labelText: text,
-          border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-          ),
         ),
       ),
     );
@@ -82,10 +79,10 @@ class _AddBookPageState extends State<AddBookPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
+           Text(
             'Add another book',
             style: TextStyle(
-              color: Colors.grey,
+              color: Colors.grey[600],
             ),
           ),
           Switch(
@@ -103,22 +100,24 @@ class _AddBookPageState extends State<AddBookPage> {
 
   Widget _submit() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(0,60,0,60),
+      padding: EdgeInsets.fromLTRB(0,MediaQuery.of(context).size.height*0.1,0,60),
       child: MaterialButton(
-        height: 60,
-        minWidth: 140,
+        height: 70,
+        minWidth: 150,
         elevation: 6,
-        color: Colors.greenAccent[400],
-        onPressed: () => {
+        color: Colors.greenAccent[200],
+        onPressed: _titleController.value.text.isNotEmpty ?  () => {
           _addBook(),
-        },
+        } : null,
+        disabledColor: Colors.grey[300],
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(50)),
         ),
         child: const Text(
           'Submit',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 22,
+            fontWeight: FontWeight.w400,
           ),
           textAlign: TextAlign.center,
         ),
@@ -137,6 +136,7 @@ class _AddBookPageState extends State<AddBookPage> {
         }
       },
       child: Material(
+        color: Colors.green[50],
         child: SingleChildScrollView(
           child: SafeArea(
             child: Column(
@@ -167,7 +167,7 @@ class _AddBookPageState extends State<AddBookPage> {
   }
   
   _addBook() async {
-    if (_titleController.value.text != "" && _authorController.value.text != "") {
+    if (_titleController.value.text != "") {
       int result = await API(context).addBook(_titleController.value.text, _authorController.value.text);
       print("result of adding a new book: ${result.toString()}");
       showDialog(context: context, builder: (context) => AddScanDialog(title: _titleController.value.text, id: result)).then((value) => _handleDialog(value));

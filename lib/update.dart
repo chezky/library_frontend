@@ -53,12 +53,12 @@ class _UpdatePageState extends State<UpdatePage> {
   Widget _title() {
     return Container(
       padding: const EdgeInsets.fromLTRB(0,30,0,20),
-      child: const Text(
+      child: Text(
         'Checkout',
         style: TextStyle(
           fontSize: 40,
           fontWeight: FontWeight.w200,
-          color: Colors.grey,
+          color: Colors.grey[600],
         ),
       ),
     );
@@ -86,7 +86,7 @@ class _UpdatePageState extends State<UpdatePage> {
                   padding: const EdgeInsets.only(left: 10, top: 5),
                   child: Icon(
                     Icons.book_outlined,
-                    color: Colors.green[200],
+                    color: Colors.green[400],
                   ),
                 ),
                 title: Text(
@@ -101,7 +101,7 @@ class _UpdatePageState extends State<UpdatePage> {
                   },
                   icon: Icon(
                     Icons.cancel_outlined,
-                    color: Colors.red[200],
+                    color: Colors.red[400],
                   ),
                 ),
               );
@@ -116,18 +116,20 @@ class _UpdatePageState extends State<UpdatePage> {
     return Container(
       padding: const EdgeInsets.fromLTRB(0,40,0,0),
       child: MaterialButton(
-        onPressed: () {
+        onPressed: context.watch<BooksScanned>().books.isNotEmpty ? () {
           _checkout();
-        },
+        } : null,
+        disabledColor: Colors.grey[300],
         height: 80,
         minWidth: 185,
         child: const Text(
           "Checkout",
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 20,
+            fontWeight: FontWeight.w400,
           ),
         ),
-        color: Colors.greenAccent[400],
+        color: Colors.greenAccent[200],
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(50)),
         ),

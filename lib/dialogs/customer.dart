@@ -62,7 +62,12 @@ class _CustomerDialogState extends State<CustomerDialog> with SingleTickerProvid
       onPressed: () => {
         _checkout()
       },
-      child: const Text('Submit'),
+      child: Text(
+        'Submit',
+        style: TextStyle(
+          color: Colors.greenAccent[700],
+        ),
+      ),
     );
   }
 

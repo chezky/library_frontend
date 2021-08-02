@@ -38,9 +38,9 @@ class _AddScanDialogState extends State<AddScanDialog> with TickerProviderStateM
   }
 
   Widget _centerWidget() {
-    return scanned ? const Icon(
+    return scanned ? Icon(
      Icons.check,
-      color: Colors.green,
+      color: Colors.greenAccent[700],
     ) : CircularProgressIndicator(
       value: controller.value,
     );
@@ -49,16 +49,19 @@ class _AddScanDialogState extends State<AddScanDialog> with TickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text(
+      title: Text(
         'Scan a Book',
+        style: TextStyle(
+          color: Colors.grey[800],
+        ),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             bodyText,
-            style: const TextStyle(
-              color: Colors.grey,
+            style: TextStyle(
+              color: Colors.grey[600],
             ),
           ),
           const Padding(
@@ -70,11 +73,18 @@ class _AddScanDialogState extends State<AddScanDialog> with TickerProviderStateM
       actions: <Widget>[
         TextButton(
           onPressed: () => Navigator.pop(context, 'skip'),
-          child: const Text('Skip'),
-        ),
+          child: Text('Skip',
+            style: TextStyle(
+              color: Colors.greenAccent[700],
+            ),
+          ),        ),
         TextButton(
           onPressed: () => Navigator.pop(context, 'cancel'),
-          child: const Text('Cancel'),
+          child: Text('Cancel',
+            style: TextStyle(
+              color: Colors.grey[600],
+            ),
+          ),
         ),
       ],
     );

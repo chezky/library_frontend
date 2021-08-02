@@ -14,25 +14,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  @override
-  void initState() {
-    API(context).getAllBooks();
-    super.initState();
-  }
-
   Widget _topIcons() {
     return Container(
       padding: const EdgeInsets.fromLTRB(10,20,10,0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // IconButton(
-          //   color: Colors.grey,
-          //   onPressed: () => {
-          //     Navigator.push(context, MaterialPageRoute(builder: (context) => const AddBookPage()))
-          //   },
-          //   icon: const Icon(Icons.settings_rounded),
-          // ),
           IconButton(
             color: Colors.grey,
             onPressed: () => {
@@ -70,16 +57,16 @@ class _HomePageState extends State<HomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _infoContainer("Checked Out", "${bl.books.where((e) => e["available"] == false).length}", Colors.orange[400], "checked"),
-                  _infoContainer("Available", "${bl.books.where((e) => e["available"] == true).length}", Colors.green[400], "available"),
+                  _infoContainer("Checked Out", "${bl.books.where((e) => e["available"] == false).length}", Colors.orange[100], "checked"),
+                  _infoContainer("Available", "${bl.books.where((e) => e["available"] == true).length}", Colors.greenAccent[100], "available"),
                 ],
 
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _infoContainer("Overdue", "${bl.books.where((e) => ((e["time_stamp"] * 1000) + 1629331200 < DateTime.now().millisecondsSinceEpoch.toInt()) && !e["available"]).length}", Colors.red[400], "due"),
-                  _infoContainer("Total", bl.books.length.toString(), Colors.purple[300], "all"),
+                  _infoContainer("Overdue", "${bl.books.where((e) => ((e["time_stamp"] * 1000) + 1629331200 < DateTime.now().millisecondsSinceEpoch.toInt()) && !e["available"]).length}", Colors.redAccent[100], "due"),
+                  _infoContainer("Total", bl.books.length.toString(), Colors.lightBlueAccent[100], "all"),
                 ],
               ),
             ],
@@ -131,7 +118,7 @@ class _HomePageState extends State<HomePage> {
         height: 100,
         minWidth: 220,
         elevation: 6,
-        color: Colors.greenAccent[400],
+        color: Colors.greenAccent[200],
         onPressed: () => {
           Navigator.push(context, MaterialPageRoute(builder: (context) => const UpdatePage()))
         },
@@ -139,9 +126,10 @@ class _HomePageState extends State<HomePage> {
           borderRadius: BorderRadius.all(Radius.circular(50)),
         ),
         child: const Text(
-          'Scan Books',
+          'Checkout',
           style: TextStyle(
-            fontSize: 25,
+            fontSize: 22,
+            fontWeight: FontWeight.w400,
           ),
           textAlign: TextAlign.center,
         ),
@@ -152,6 +140,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Material(
+      color: Colors.green[50],
       child: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

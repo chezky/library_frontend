@@ -106,6 +106,8 @@ class _ListPageState extends State<ListPage> {
         API(context).deleteBook(bl["id"]);
       },
       child: ExpansionTile(
+        textColor: Colors.greenAccent[700],
+        iconColor: Colors.greenAccent[700],
         title: Text(
           bl["title"],
         ),
@@ -114,7 +116,7 @@ class _ListPageState extends State<ListPage> {
         ),
         leading: Icon(
           Icons.circle,
-          color: bl["available"] ? Colors.green : Colors.red,
+          color: bl["available"] ? Colors.green[400] : Colors.red[400],
         ),
         children: [
           Row(
@@ -134,7 +136,7 @@ class _ListPageState extends State<ListPage> {
                 onPressed: () => {
                   context.read<BooksScanned>().add(bl)
                 },
-                icon: Icon(Icons.add_shopping_cart_rounded),
+                icon: const Icon(Icons.add_shopping_cart_rounded),
               ),
             ],
           )
@@ -171,28 +173,32 @@ class _ListPageState extends State<ListPage> {
                 ),
                 // Display a placeholder widget to visualize the shrinking size.
                 flexibleSpace: Padding(
-                  padding: EdgeInsets.fromLTRB(15,20,15,0),
+                  padding: const EdgeInsets.fromLTRB(15,30,15,0),
                   child: Center(
                     child: TextField(
+                      controller: searchController,
                       onChanged: (s) => API(context).getByTitle(s),
-                      decoration: const InputDecoration(
-                          hintText: "Search by title, author, or customer",
-                          floatingLabelBehavior: FloatingLabelBehavior.never,
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.green,
-                            ),
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          )
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.search_rounded,
+                          color: Colors.greenAccent[700],
+                        ),
+                        suffixIcon: searchController.value.text.isNotEmpty ? IconButton(
+                          icon: const Icon(Icons.cancel_outlined),
+                          color: Colors.red[400],
+                          onPressed: () => {
+                            searchController.text = "",
+                            API(context).getAllBooks(),
+                          },
+                        ) : null,
+                        hintText: "Search by title, author, or customer",
+                        floatingLabelBehavior: FloatingLabelBehavior.never,
                       ),
                     ),
                   ),
                 ),
                 // Make the initial height of the SliverAppBar larger than normal.
-                expandedHeight: 175,
-                backgroundColor: Colors.lightGreenAccent[100]!.withOpacity(0.6),
+                expandedHeight: 150,
+                backgroundColor: Colors.green[50],
               ),
               // Next, create a SliverList
               SliverList(
@@ -212,7 +218,7 @@ class _ListPageState extends State<ListPage> {
                         case "due":
                           return context.watch<BookList>().books.isNotEmpty ? ((bl.books[idx]["time_stamp"] * 1000) + 1629331200 < DateTime.now().millisecondsSinceEpoch.toInt() && !bl.books[idx]["available"]) ? _tile(idx, bl.books[idx]) : Container() : Center(child: Text('No Results'));
                       }
-                      return Text('No Results');
+                      return const Text('No Results');
                     },
                   ),
                   // Builds 1000 ListTiles
