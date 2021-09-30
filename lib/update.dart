@@ -2,10 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:library_frontend/api.dart';
-import 'dialogs/customer.dart';
+import 'account_list.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:provider/provider.dart';
 
+import 'models/account.dart';
 import 'models/books_scanned.dart';
 
 class UpdatePage extends StatefulWidget {
@@ -15,20 +16,32 @@ class UpdatePage extends StatefulWidget {
   State<UpdatePage> createState() => _UpdatePageState();
 }
 
-class _UpdatePageState extends State<UpdatePage> {
+class _UpdatePageState extends State<UpdatePage> with TickerProviderStateMixin {
+  late AnimationController controller;
+
   String actionText = "Scan a Book";
   bool scannedEmpty = true;
+  bool _loading = false;
 
   @override
   void initState() {
     _checkNFCAvailable();
     _read();
+
+    controller = AnimationController(vsync: this, duration: const Duration(seconds: 1))
+      ..addListener(() {
+        setState(() {
+
+        });
+      });
+    controller.repeat();
     super.initState();
   }
 
   @override
   void dispose() {
     NfcManager.instance.stopSession();
+    controller.dispose();
     super.dispose();
   }
 
@@ -51,15 +64,31 @@ class _UpdatePageState extends State<UpdatePage> {
   }
 
   Widget _title() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(0,30,0,20),
-      child: Text(
-        'Checkout',
-        style: TextStyle(
-          fontSize: 40,
-          fontWeight: FontWeight.w200,
-          color: Colors.grey[600],
-        ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0,10,0,20),
+      child: Column(
+        children: [
+          Text(
+            'Checkout for',
+            style: TextStyle(
+              fontSize: 40,
+              fontWeight: FontWeight.w200,
+              color: Colors.grey[600],
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountListPage(checkout: true)));
+            },
+            child: Text(
+              context.watch<Account>().account.isNotEmpty ? context.watch<Account>().account["name"] : "Tap to search",
+              style: TextStyle(
+                fontSize: 27,
+                color: Colors.greenAccent[700],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -115,8 +144,11 @@ class _UpdatePageState extends State<UpdatePage> {
   Widget _submitButton() {
     return Container(
       padding: const EdgeInsets.fromLTRB(0,40,0,0),
-      child: MaterialButton(
-        onPressed: context.watch<BooksScanned>().books.isNotEmpty ? () {
+      child: _loading ? CircularProgressIndicator(
+        value: controller.value,
+      ) :
+      MaterialButton(
+        onPressed: context.watch<BooksScanned>().books.isNotEmpty && context.watch<Account>().account.isNotEmpty ? () {
           _checkout();
         } : null,
         disabledColor: Colors.grey[300],
@@ -189,13 +221,22 @@ class _UpdatePageState extends State<UpdatePage> {
   }
   
   _checkout() async {
-    if (context.read<BooksScanned>().books.isNotEmpty) {
-      showDialog(context: context, builder: (context) => const CustomerDialog()).then((value) => _handleDialog(value));
+    setState(() {
+      _loading = !_loading;
+    });
+    String res = await API(context).updateBooks();
+    if (res == "success") {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        setState(() {
+          _loading = !_loading;
+        });
+        context.read<Account>().account.clear();
+      });
+    } else {
+      setState(() {
+        ScaffoldMessenger.of(context).showSnackBar(_snack("Error Occurred"));
+      });
     }
-  }
-
-  _handleDialog(String value) {
-    print(value);
   }
 
   Future<bool> _checkNFCAvailable() async {

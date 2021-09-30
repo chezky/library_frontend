@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 
 class AddScanDialog extends StatefulWidget {
-  const AddScanDialog({Key? key, this.title, this.id}) : super(key: key);
+  const AddScanDialog({Key ?key, this.title, this.id}) : super(key: key);
   final String? title;
   final int? id;
 
@@ -110,7 +110,7 @@ class _AddScanDialogState extends State<AddScanDialog> with TickerProviderStateM
   _write() async {
     NfcManager.instance.startSession(
       onDiscovered: (NfcTag tag) async {
-        var ndef = Ndef.from(tag);
+        var ndef = Ndef?.from(tag);
 
         NdefMessage message = NdefMessage([
           NdefRecord.createText(widget.id.toString()),

@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:library_frontend/models/accounts_list.dart';
+import 'models/account.dart';
 import 'models/book_list.dart';
 import 'package:library_frontend/models/books_scanned.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +18,7 @@ class API {
 
   getBookByID(String msg) async {
     var content = '{"id":${int.parse(msg)}}';
-    var url = Uri.parse("${cfg.get("host")}/get/id");
+    var url = Uri.parse("${cfg.get("host")}/book/get/id");
 
     var res = await http.post(url, body: content);
     print("res for get bookByID is  ${res.body}");
@@ -40,7 +42,7 @@ class API {
     }
 
     String content = '{"query":"$query"}';
-    var url = Uri.parse("${cfg.get("host")}/search/title");
+    var url = Uri.parse("${cfg.get("host")}/book/search");
 
     var res = await http.post(url, body: content);
     print("length of search by title  ${res.body.length}");
@@ -53,18 +55,17 @@ class API {
   }
 
   getAllBooks() async {
-    var url = Uri.parse("${cfg.get("host")}/get");
+    var url = Uri.parse("${cfg.get("host")}/book/get");
 
     var res = await http.post(url, body: '');
     print("length of get all books  ${res.body.length}");
 
     var dcdc = jsonDecode(res.body);
-    print(dcdc[10]);
     context.read<BookList>().clear();
     context.read<BookList>().add(dcdc);
   }
 
-  updateBooks(String name) async {
+  Future<String> updateBooks() async {
     var books = context.read<BooksScanned>().books;
 
     List ids = [];
@@ -72,20 +73,21 @@ class API {
       ids.add(books[i]["id"]);
     }
 
-    String content = '{"ids":$ids, "available":false, "name":"${_parseWord(name)}"}';
-    var url = Uri.parse("${cfg.get("host")}/update");
+    String content = '{"ids":$ids, "customer_id":${context.read<Account>().account["id"]}}';
+    var url = Uri.parse("${cfg.get("host")}/book/update");
 
     var res = await http.post(url, body: content);
     print("updating books was a ${res.body}");
     context.read<BooksScanned>().clear();
-
     getAllBooks();
+    getAllAccounts();
+    return res.body.toString();
   }
 
   Future<int> addBook(String title, String author) async {
-    String content = '{"title":"${_parseWord(title)}", "author":"${_parseWord(author)}"}';
+    String content = '{"title":"${parseWord(title)}", "author":"${parseWord(author)}"}';
     print('host is: ${cfg.get("host")}');
-    var url = Uri.parse("${cfg.get("host")}/new");
+    var url = Uri.parse("${cfg.get("host")}/book/new");
     print('url is: $url');
 
     var res = await http.post(url, body: content);
@@ -96,7 +98,7 @@ class API {
 
   deleteBook(int id) async {
     String content = '{"id":$id}';
-    var url = Uri.parse("${cfg.get("host")}/delete");
+    var url = Uri.parse("${cfg.get("host")}/book/delete");
     print('url is: $url');
 
     var res = await http.post(url, body: content);
@@ -104,17 +106,108 @@ class API {
     getAllBooks();
   }
 
-  returnBook(int id) async {
+  Future<String> returnBook(int id) async {
     String content = '{"available":true, "id":$id}';
-    var url = Uri.parse("${cfg.get("host")}/checkout");
+    var url = Uri.parse("${cfg.get("host")}/book/checkout");
     print('url is: $url');
 
     var res = await http.post(url, body: content);
     print("res for return book is: ${res.body}");
     getAllBooks();
+    getAllAccounts();
+    return res.body.toString();
   }
 
-  String _parseWord(String txt) {
+  // api for accounts
+  getAllAccounts() async {
+    var url = Uri.parse("${cfg.get("host")}/account/get");
+
+    var res = await http.post(url, body: '');
+    print("length of get all accounts  ${res.body.length}");
+
+    var dcdc = jsonDecode(res.body);
+    print(dcdc);
+    context.read<AccountsList>().clear();
+    if (dcdc != null) {
+      context.read<AccountsList>().add(dcdc);
+    }
+  }
+
+  Future getAccountByID(int id) async {
+    var url = Uri.parse("${cfg.get("host")}/account/get/id");
+
+    String content = '{"id":$id}';
+    var res = await http.post(url, body: content);
+    print("length of get get account by id is:  ${res.body.length}");
+    print("result of get acccount by id: ${res.body}");
+
+    var dcdc = jsonDecode(res.body);
+    // context.read<Account>().set(dcdc);
+    if (dcdc != null) {
+      return dcdc;
+    }
+    return "error";
+  }
+
+  Future<String> updateAccount(int id, String name, email, bool emailList) async {
+    var url = Uri.parse("${cfg.get("host")}/account/update");
+
+    String content = '{"id":$id, "name": "$name", "email":"$email","email_list":$emailList}';
+    print(content);
+    var res = await http.post(url, body: content);
+    print("length of update account is:  ${res.body.length}");
+    print("result of update account: ${res.body}");
+    getAllAccounts();
+    if (res.body != null) {
+      return res.body.toString();
+    }
+    return "error";
+  }
+
+
+  searchAccounts(String query) async {
+    if (query == "") {
+      getAllAccounts();
+      return;
+    }
+
+    String content = '{"query":"$query"}';
+    var url = Uri.parse("${cfg.get("host")}/account/search");
+
+    var res = await http.post(url, body: content);
+    print("length of search accounts  ${res.body.length}");
+    print(res.body);
+    var dcdc = jsonDecode(res.body);
+    context.read<AccountsList>().clear();
+    if (dcdc != null) {
+      context.read<AccountsList>().add(dcdc);
+    }
+  }
+
+  Future<int> addAccount(String name, email) async {
+    String content = '{"name":"${parseWord(name)}", "email":"$email"}';
+    var url = Uri.parse("${cfg.get("host")}/account/new");
+    print('url is: $url');
+
+    var res = await http.post(url, body: content);
+    print("res for add account is: ${res.body}");
+    getAllAccounts();
+    return int.parse(res.body);
+  }
+
+
+  void deleteAccount(int id) async {
+    String content = '{"id":$id}';
+    var url = Uri.parse("${cfg.get("host")}/account/delete");
+    print('url is: $url');
+
+    var res = await http.post(url, body: content);
+    print("res for delete account is: ${res.body}");
+    getAllAccounts();
+  }
+
+
+  String parseWord(String txt) {
     String newTxt="";
     List<String> badWords = ["or", "are", "on", "a", "the", "in"];
 

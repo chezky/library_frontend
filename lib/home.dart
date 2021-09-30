@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:library_frontend/api.dart';
-import 'package:library_frontend/list.dart';
+import 'package:library_frontend/book_list.dart';
+import 'account_list.dart';
 import 'models/book_list.dart';
 import 'package:library_frontend/update.dart';
 import 'package:library_frontend/new_book.dart';
 import 'package:provider/provider.dart';
 
+import 'new_account.dart';
+
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({Key ?key}) : super(key: key);
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -16,16 +19,38 @@ class _HomePageState extends State<HomePage> {
 
   Widget _topIcons() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(10,20,10,0),
+      padding: const EdgeInsets.fromLTRB(15,20,15,0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
             color: Colors.grey,
             onPressed: () => {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const AddBookPage()))
+              API(context).getAllAccounts(),
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountListPage(checkout: false)))
             },
-            icon: const Icon(Icons.add_rounded),
+            icon: const Icon(Icons.people_outlined),
+          ),
+          PopupMenuButton(
+            color: Colors.lightGreen[100],
+            icon: const Icon(Icons.add_rounded, color: Colors.grey,),
+            onSelected: (r) {
+              if(r == 0) {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const AddBookPage()));
+              } else if (r == 1) {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const AddAccountPage()));
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                child: Text("Add a Book"),
+                value: 0,
+              ),
+              const PopupMenuItem(
+                child: Text("Add an Account"),
+                value: 1,
+              ),
+            ],
           ),
         ],
       ),
@@ -57,16 +82,16 @@ class _HomePageState extends State<HomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _infoContainer("Checked Out", "${bl.books.where((e) => e["available"] == false).length}", Colors.orange[100], "checked"),
-                  _infoContainer("Available", "${bl.books.where((e) => e["available"] == true).length}", Colors.greenAccent[100], "available"),
+                  _infoContainer("Checked Out", "${bl.books.where((e) => e["available"] == false).length}", Colors.orange[100]!, "checked"),
+                  _infoContainer("Available", "${bl.books.where((e) => e["available"] == true).length}", Colors.greenAccent[100]!, "available"),
                 ],
 
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _infoContainer("Overdue", "${bl.books.where((e) => ((e["time_stamp"] * 1000) + 1629331200 < DateTime.now().millisecondsSinceEpoch.toInt()) && !e["available"]).length}", Colors.redAccent[100], "due"),
-                  _infoContainer("Total", bl.books.length.toString(), Colors.lightBlueAccent[100], "all"),
+                  _infoContainer("Overdue", "${bl.books.where((e) => ((e["time_stamp"] * 1000) + 1629331200 < DateTime.now().millisecondsSinceEpoch.toInt()) && !e["available"]).length}", Colors.redAccent[100]!, "due"),
+                  _infoContainer("Total", bl.books.length.toString(), Colors.lightBlueAccent[100]!, "all"),
                 ],
               ),
             ],
@@ -76,7 +101,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _infoContainer(String title, body, Color? color, String use) {
+  Widget _infoContainer(String title, body, Color color, String use) {
     return Container(
       margin: const EdgeInsets.fromLTRB(2,30,2,2),
       child: Column(

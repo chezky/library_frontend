@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:library_frontend/home.dart';
 import 'package:library_frontend/splash.dart';
 
 class Library extends StatefulWidget {
-  const Library({Key? key}) : super(key: key);
+  const Library({Key ?key}) : super(key: key);
 
   @override
   State<Library> createState() => _LibraryState();
@@ -32,7 +31,7 @@ ThemeData _lightTheme() {
     ),
     inputDecorationTheme: InputDecorationTheme(
       labelStyle: TextStyle(
-        color: (Colors.green[900])!,
+        color: (Colors.green[900]),
       ),
       filled: true,
       fillColor: Colors.greenAccent[100]?.withOpacity(0.3),
@@ -42,7 +41,7 @@ ThemeData _lightTheme() {
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(5)),
         borderSide: BorderSide(
-          color: (Colors.green[400])!,
+          color: (Colors.green[400]!),
           style: BorderStyle.solid,
           width: 0.2,
         ),
@@ -50,7 +49,7 @@ ThemeData _lightTheme() {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
         borderSide: BorderSide(
-          color: (Colors.greenAccent[700])!,
+          color: (Colors.greenAccent[700]!),
           width: 1.4,
         ),
       ),
@@ -59,17 +58,17 @@ ThemeData _lightTheme() {
       thumbColor: MaterialStateProperty.resolveWith<Color>(
         (Set<MaterialState> states) {
           if (states.contains(MaterialState.selected)) {
-            return (Colors.green[400])!; // Use the component's default.
+            return (Colors.green[400]!); // Use the component's default.
           }
-          return (Colors.grey[500])!; // Use the component's default.
+          return (Colors.grey[500]!); // Use the component's default.
         },
       ),
       trackColor: MaterialStateProperty.resolveWith<Color>(
         (Set<MaterialState> states) {
           if (states.contains(MaterialState.selected)) {
-            return (Colors.greenAccent[100])!; // Use the component's default.
+            return (Colors.greenAccent[100]!); // Use the component's default.
           }
-          return (Colors.grey[300])!; // Use the component's default.
+          return (Colors.grey[300]!); // Use the component's default.
         },
       ),
     ),

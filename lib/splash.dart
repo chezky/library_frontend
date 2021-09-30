@@ -21,6 +21,7 @@ class _SplashState extends State<Splash> {
     super.initState();
     _icon();
     API(context).getAllBooks();
+    API(context).getAllAccounts();
   }
 
   @override

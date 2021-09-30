@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:library_frontend/app.dart';
+import 'package:library_frontend/models/account.dart';
+import 'package:library_frontend/models/accounts_list.dart';
 import 'package:library_frontend/models/books_scanned.dart';
 import 'package:provider/provider.dart';
 
@@ -15,6 +17,8 @@ void main() async{
     providers: [
       ChangeNotifierProvider(create: (context) => BookList()),
       ChangeNotifierProvider(create: (context) => BooksScanned()),
+      ChangeNotifierProvider(create: (context) => AccountsList()),
+      ChangeNotifierProvider(create: (context) => Account()),
     ],
     child: Library(),
   ));

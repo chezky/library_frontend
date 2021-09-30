@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'account.dart';
 import 'dialogs/add_scan.dart';
 import 'models/book_list.dart';
 import 'package:library_frontend/models/books_scanned.dart';
@@ -7,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'api.dart';
 
 class ListPage extends StatefulWidget {
-  const ListPage({Key? key, this.use}) : super(key: key);
+  const ListPage({Key ?key, this.use}) : super(key: key);
 
   final String? use;
 
@@ -25,23 +26,31 @@ class _ListPageState extends State<ListPage> {
     API(context).getAllBooks();
   }
 
-  _checkedOutOwner(String customer) {
-    return Column (
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Customer:",
-          style: TextStyle(
-            fontSize: 16,
+  _checkedOutOwner(String customer, int id) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => AccountPage(
+          name: customer,
+          tag: id,
+        )));
+      },
+      child: Column (
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Customer:",
+            style: TextStyle(
+              fontSize: 16,
+            ),
           ),
-        ),
-        Text(
-          customer,
-          style: const TextStyle(
-            fontSize: 12,
+          Text(
+            customer,
+            style: const TextStyle(
+              fontSize: 12,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -69,7 +78,7 @@ class _ListPageState extends State<ListPage> {
   Widget _tile(int idx, bl) {
     return Dismissible(
       key: Key("${bl["id"]}_$idx}"),
-      background: Container(color: Colors.red),
+      // Background: Container(color: Colors.red),
       confirmDismiss: (DismissDirection direction) async {
         return await showDialog(
           context: context,
@@ -122,8 +131,22 @@ class _ListPageState extends State<ListPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              if (!bl["available"]) _checkedOutOwner(bl["customer"] ?? ""),
+              if (!bl["available"]) _checkedOutOwner(bl["customer"], bl["customer_id"]),
               if(bl["time_stamp"] != 0) _checkedOutDate(bl["time_stamp"]),
+              if (!bl["available"]) IconButton(
+                onPressed: () {
+                  API(context).returnBook(bl["id"]);
+                  context.read<BookList>().remove(bl);
+
+                },
+                icon: const Icon(Icons.keyboard_return_outlined),
+              ),
+              if (bl["available"]) IconButton(
+                onPressed: () => {
+                  context.read<BooksScanned>().add(bl)
+                },
+                icon: const Icon(Icons.add_shopping_cart_rounded),
+              ),
               IconButton(
                 icon: const Icon(
                   Icons.scanner_outlined,
@@ -131,12 +154,6 @@ class _ListPageState extends State<ListPage> {
                 onPressed: () {
                   showDialog(context: context, builder: (context) => AddScanDialog(title: bl["title"], id: bl["id"]));
                 },
-              ),
-              if (bl["available"]) IconButton(
-                onPressed: () => {
-                  context.read<BooksScanned>().add(bl)
-                },
-                icon: const Icon(Icons.add_shopping_cart_rounded),
               ),
             ],
           )
@@ -187,7 +204,7 @@ class _ListPageState extends State<ListPage> {
                           color: Colors.red[400],
                           onPressed: () => {
                             searchController.text = "",
-                            API(context).getAllBooks(),
+                            API(context).getAllAccounts(),
                           },
                         ) : null,
                         hintText: "Search by title, author, or customer",
